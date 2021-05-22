@@ -47,6 +47,8 @@ pod install
 
 ### Build Project in Native IDE
 
+#### Android
+
 - open terminal/cmd
 
 ```
@@ -56,7 +58,11 @@ npm run android-release
 yarn android-release
 ```
 
-- open XCode, select /covid_report/ios, clean and build [IOS Steps]
+- the apk (app-release.apk) file inside /android/app/build/outputs/apk/release/ folder
+
+#### IOS
+
+- open XCode, select /covid_report/ios clean and build [IOS Steps]
 
 
 
