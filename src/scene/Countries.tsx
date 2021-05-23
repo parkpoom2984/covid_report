@@ -7,6 +7,7 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
+import Tooltip from 'react-native-walkthrough-tooltip';
 import { Placeholder, Fade, PlaceholderLine } from 'rn-placeholder';
 import { observer, inject } from 'mobx-react';
 import _ from 'lodash';
@@ -29,11 +30,34 @@ const { HEIGHT }: any = Header;
 const HEADER_HEIGHT = HEIGHT;
 
 const listSkeleton = [{}, {}, {}, {}] as any;
+const listSort = [
+  {
+    value: 'All',
+    key: 'All',
+  },
+  {
+    value: 'Active',
+    key: 'TotalConfirmed',
+  },
+  {
+    value: 'Deaths',
+    key: 'TotalDeaths',
+  },
+  {
+    value: 'Recoved',
+    key: 'TotalRecovered',
+  },
+];
 
 const Countries = observer(props => {
   const [countries, setCountries] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [toolTipSortingEnable, setToolTipSortingEnable] = useState(false);
+  const [sortingBy, setSortingBy] = useState({
+    value: 'All',
+    key: 'All',
+  });
 
   useEffect(() => {
     setCountries(props.navigation.getParam('countries'));
@@ -277,6 +301,27 @@ const Countries = observer(props => {
     );
   };
 
+  const _updateSorting = item => {
+    setSortingBy(item);
+    setToolTipSortingEnable(false);
+  };
+
+  const _renderSelectSorting = (
+    <View>
+      <FlatList
+        data={listSort}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => {
+              _updateSorting(item);
+            }}>
+            <Text style={{ fontSize: 16, padding: 16 }}>{item.value}</Text>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
+  );
+
   const _clearSearchValue = () => {
     setSearchValue('');
   };
@@ -287,11 +332,13 @@ const Countries = observer(props => {
           item.Country.toLowerCase().includes(searchValue.toLowerCase()),
         )
       : countries;
-    return _.orderBy(
-      _list,
-      ['TotalConfirmed', 'TotalDeaths', 'TotalRecovered'],
-      ['desc', 'desc', 'desc'],
-    );
+    return sortingBy.key === 'All'
+      ? _.orderBy(
+          _list,
+          ['TotalConfirmed', 'TotalDeaths', 'TotalRecovered'],
+          ['desc', 'desc', 'desc'],
+        )
+      : _.orderBy(_list, [sortingBy.key], 'desc');
   };
 
   return (
@@ -304,41 +351,89 @@ const Countries = observer(props => {
       <View
         style={{
           flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 16,
-          backgroundColor: Colors.PRIMARY_TRANSPARENT,
-          marginHorizontal: 16,
-          marginBottom: 16,
-          borderRadius: 8,
         }}>
-        <Image
-          source={require('~/src/assets/images/ic_search.png')}
-          resizeMode={'stretch'}
-          style={{ width: 24, height: 24, marginRight: 16 }}
-        />
-        <TextInput
+        <View
           style={{
-            padding: 8,
-            flex: 1,
-            fontFamily: 'Sukhumvit Set',
-            fontSize: 16,
-          }}
-          placeholder={'Search'}
-          placeholderTextColor={Colors.WHITE}
-          onChangeText={setSearchValue}
-          value={searchValue}
-        />
-        {searchValue ? (
-          <TouchableOpacity onPress={_clearSearchValue}>
-            <Image
-              source={require('~/src/assets/images/ic_close.png')}
-              resizeMode={'stretch'}
-              style={{ width: 24, height: 24, marginLeft: 16 }}
-            />
-          </TouchableOpacity>
-        ) : (
-          <View />
-        )}
+            flex: 0.6,
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 16,
+            backgroundColor: Colors.PRIMARY_TRANSPARENT,
+            marginHorizontal: 16,
+            marginBottom: 16,
+            borderRadius: 8,
+          }}>
+          <Image
+            source={require('~/src/assets/images/ic_search.png')}
+            resizeMode={'stretch'}
+            style={{ width: 24, height: 24, marginRight: 16 }}
+          />
+          <TextInput
+            style={{
+              padding: 8,
+              flex: 1,
+              fontFamily: 'Sukhumvit Set',
+              fontSize: 16,
+            }}
+            placeholder={'Search'}
+            placeholderTextColor={Colors.WHITE}
+            onChangeText={setSearchValue}
+            value={searchValue}
+          />
+          {searchValue ? (
+            <TouchableOpacity onPress={_clearSearchValue}>
+              <Image
+                source={require('~/src/assets/images/ic_close.png')}
+                resizeMode={'stretch'}
+                style={{ width: 24, height: 24, marginLeft: 16 }}
+              />
+            </TouchableOpacity>
+          ) : (
+            <View />
+          )}
+        </View>
+        <View
+          style={{
+            flex: 0.4,
+            marginRight: 16,
+            marginBottom: 16,
+          }}>
+          <Tooltip
+            isVisible={toolTipSortingEnable}
+            content={_renderSelectSorting}
+            placement="bottom"
+            onClose={() => {
+              setToolTipSortingEnable(false);
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                setToolTipSortingEnable(true);
+              }}
+              style={{
+                width: '100%',
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                backgroundColor: Colors.PRIMARY_TRANSPARENT,
+                borderRadius: 8,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ color: Colors.WHITE, flex: 1 }}>
+                  {sortingBy.value}
+                </Text>
+                <Image
+                  style={{
+                    width: 24,
+                    height: 24,
+                    transform: [{ rotate: '270deg' }],
+                  }}
+                  source={require('~/src/assets/images/arrow_back.png')}
+                />
+              </View>
+            </TouchableOpacity>
+          </Tooltip>
+        </View>
       </View>
       <View style={{ flex: 1, backgroundColor: Colors.WHITE }}>
         <FlatList
