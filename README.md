@@ -103,9 +103,4 @@ yarn android
 ```
 
 ## Screenshot
-
-![alt text](./public_markdown/page_1.png "1")
-
-
-
-![alt text](./public_markdown/page_2.png "2")
+<img src="./public_markdown/page_1.png"  width="200"> <img src="./public_markdown/page_2.png"  width="200">
