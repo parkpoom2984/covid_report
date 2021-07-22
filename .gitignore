@@ -60,3 +60,4 @@ buck-out/
 
 
 /coverage
+/test_bitrise hook
