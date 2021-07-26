@@ -18,6 +18,7 @@ import { Formatter, DatetimeUtils } from '~/src/utils';
 import { route } from '~/src/common/navigate';
 import { CaseGlobal } from '~/src/model';
 import { Placeholder, Fade, PlaceholderLine } from 'rn-placeholder';
+import env from 'react-native-config';
 
 const { width: _width, height: _height } = Dimensions.get('window');
 const HEIGHT_MAIN_IMAGE = _height / 3;
@@ -127,7 +128,7 @@ const Home = observer(() => {
               fontSize: 20,
               color: Colors.PRIMARY,
             }}>
-            COVID-19, Report
+            COVID-19, {env.NAME}
           </Text>
           {global.Date && (
             <Text

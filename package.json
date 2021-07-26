@@ -12,6 +12,9 @@
     "bundle-option": "react-native bundle --dev false --entry-file index.js",
     "bundle-android-apply": "shx cp -R bundle/android .",
     "android-release": "yarn bundle-android && yarn bundle-android-apply && yarn android-build",
+    "android:dev": "ENVFILE=./src/config/env/.env.dev && yarn android --variant devDebug --appIdSuffix dev",
+    "android:qa": "ENVFILE=./src/config/env/.env.qa && yarn android --variant qaDebug --appId=com.covid_report.qa",
+    "android:prod": "ENVFILE=./src/config/env/.env.prod && yarn android --variant prodDebug",
     "android-build": "cd android && ./gradlew assembleRelease --stacktrace"
   },
   "dependencies": {
@@ -23,6 +26,7 @@
     "moment-timezone": "0.5.33",
     "react": "16.13.1",
     "react-native": "0.63.4",
+    "react-native-config": "^1.4.3",
     "react-native-flags": "1.0.0",
     "react-native-gesture-handler": "1.9.0",
     "react-native-orientation": "https://github.com/tomyo-edtech/react-native-orientation#master",
